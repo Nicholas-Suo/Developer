@@ -1,6 +1,7 @@
 package com.example.developer;
 
 import java.io.ObjectStreamException;
+import java.util.HashMap;
 
 public class Singleton {
     //double check locked
@@ -44,4 +45,6 @@ public class Singleton {
     private Object readResolve() throws ObjectStreamException {
         return mInstance;
     }
+
+
 }
