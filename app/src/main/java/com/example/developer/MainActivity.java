@@ -28,9 +28,9 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-       // setContentView(R.layout.activity_main);
+        setContentView(R.layout.activity_main);
         //setContentView(R.layout.motion_layout);
-        setContentView(R.layout.card_view_item);
+       // setContentView(R.layout.card_view_item);
         //RecyclerView codes begin
 /*          setContentView(R.layout.recycler_view_layout);
         myRecyclerView = findViewById(R.id.my_recycler_view);
