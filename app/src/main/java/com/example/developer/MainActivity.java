@@ -2,9 +2,21 @@ package com.example.developer;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.NotificationCompat;
+import androidx.core.app.NotificationManagerCompat;
+import androidx.core.app.RemoteInput;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.app.NotificationChannel;
+import android.app.NotificationManager;
+import android.app.PendingIntent;
+//import android.app.RemoteInput;
+import android.content.BroadcastReceiver;
+import android.content.Context;
+import android.content.Intent;
+import android.content.IntentFilter;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
@@ -21,14 +33,24 @@ import java.util.List;
 public class MainActivity extends AppCompatActivity {
 
     private static final String TAG="Developer";
+    private static final String MY_CHANNEL_ID="MY_CHANNEL_ID";
 
     RecyclerView myRecyclerView;
     MyRecyclerViewAdapter myRecyclerViewAdapter;
     RecyclerView.LayoutManager layoutManager;
+    NotificationCompat.Builder notificationBuilder =null;
+    NotificationManager notificationManager = null;
+    NotificationManagerCompat notificationManagerCompat = null;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        showReplyNotification();
+      //  notificationStartReceiver();
+       // IntentFilter filter = new IntentFilter();
+       // filter.addAction("ACTION_FROM_NOTIFICATION");
+     //   registerReceiver(receiver,filter);
+
         //setContentView(R.layout.motion_layout);
        // setContentView(R.layout.card_view_item);
         //RecyclerView codes begin
@@ -48,6 +70,68 @@ public class MainActivity extends AppCompatActivity {
         //RecyclerView codes end
     }
 
+/*
+    public BroadcastReceiver receiver = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+           Log.d(TAG," the broadcast is from notificaion");
+        }
+    };
+*/
+    private void showReplyNotification(){
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT_WATCH) {
+            RemoteInput remoteInput =  new RemoteInput.Builder("remote_input_key").setLabel("Reply").build();
+            Intent receiveReplyReceiverIntent = new Intent(this,MyBroadcastReceiver.class);
+            PendingIntent pendingIntent = PendingIntent.getBroadcast(this,1,receiveReplyReceiverIntent,0);
+            NotificationCompat.Action action = new NotificationCompat.Action.Builder(R.drawable.ic_launcher_foreground,"NotificationAction",pendingIntent).addRemoteInput(remoteInput).build();
+            NotificationCompat.Builder builder = new NotificationCompat.Builder(this,MY_CHANNEL_ID).setContentTitle("testRemotInput")
+                    .setContentText("this is content text")
+                    .setSmallIcon(R.drawable.ic_launcher_foreground)
+                    .addAction(action);
+            notificationManagerCompat = NotificationManagerCompat.from(this);
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                    notificationManagerCompat.createNotificationChannel(new NotificationChannel(MY_CHANNEL_ID,"remoteInputReply",NotificationManager.IMPORTANCE_DEFAULT));
+                }
+            notificationManagerCompat.notify(1,builder.build());
+
+        }
+    }
+
+    private void notificationStartReceiver(){
+        Intent broadCastIntent = new Intent(this,MyBroadcastReceiver.class);
+        broadCastIntent.setAction("action.from.notification");
+        PendingIntent pendingIntent = PendingIntent.getBroadcast(this,0,broadCastIntent,0);
+        notificationBuilder = new NotificationCompat.Builder(this,MY_CHANNEL_ID).setSmallIcon(R.drawable.ic_launcher_foreground)
+                .setContentTitle("start Broadcaset").setContentText("click button,start broadcastreceiver")
+                 .setPriority(NotificationCompat.PRIORITY_DEFAULT)
+                 .addAction(R.drawable.ic_launcher_foreground,"startBroadcast",pendingIntent)
+                 .setAutoCancel(true);
+        notificationManagerCompat = NotificationManagerCompat.from(this);
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            notificationManagerCompat.createNotificationChannel(new NotificationChannel(MY_CHANNEL_ID,"testBroadcast",NotificationManager.IMPORTANCE_DEFAULT));
+        }
+        notificationManagerCompat.notify(1,notificationBuilder.build());
+    }
+    public void NotificationStartActivity(){
+        Intent notificationIntent = new Intent(this,NotificationActivity.class);
+        notificationIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+        PendingIntent pendingIntent = PendingIntent.getActivity(this,0,notificationIntent,0);
+        notificationBuilder = new NotificationCompat.Builder(this,"myChannelId");
+        notificationBuilder.setSmallIcon(R.drawable.ic_launcher_background)
+                .setContentTitle("test notification")
+                .setContentText("this is my contexttext")
+                .setContentIntent(pendingIntent)
+                .setPriority(NotificationCompat.PRIORITY_DEFAULT)
+                .setAutoCancel(true);
+        notificationManagerCompat = NotificationManagerCompat.from(this);
+        //notificationManager = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            // notificationManager.createNotificationChannel(new NotificationChannel("myChannelId","Developer", NotificationManager.IMPORTANCE_DEFAULT));
+            notificationManagerCompat.createNotificationChannel(new NotificationChannel("myChannelId","Developer", NotificationManager.IMPORTANCE_DEFAULT));
+        }
+        // notificationManager.notify(1,notificationBuilder.build());
+        notificationManagerCompat.notify(1,notificationBuilder.build());
+    }
     public class MyRecyclerViewHolder extends RecyclerView.ViewHolder{
         TextView myTextView;
         public MyRecyclerViewHolder(View view){
