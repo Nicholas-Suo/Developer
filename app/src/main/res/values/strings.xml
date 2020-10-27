@@ -3,4 +3,5 @@
     <string name="text_str1">text1</string>
     <string name="text_str2">text2</string>
     <string name="text_str3">text3</string>
+    <string name="emergency_notification">it\'s emergency notificaion</string>
 </resources>

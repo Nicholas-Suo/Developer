@@ -8,6 +8,7 @@ import androidx.core.app.RemoteInput;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.app.Notification;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
@@ -45,7 +46,9 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        showReplyNotification();
+        showFullScreenNotification();
+        //showProgressNotification();
+     //   showReplyNotification();
       //  notificationStartReceiver();
        // IntentFilter filter = new IntentFilter();
        // filter.addAction("ACTION_FROM_NOTIFICATION");
@@ -78,12 +81,42 @@ public class MainActivity extends AppCompatActivity {
         }
     };
 */
+    private void showFullScreenNotification(){
+        Intent intent = new Intent(this,FullScreenNotificationActivity.class);
+        PendingIntent pendingIntent = PendingIntent.getActivity(this,1,intent,PendingIntent.FLAG_UPDATE_CURRENT);
+        notificationBuilder = new NotificationCompat.Builder(this,MY_CHANNEL_ID).setContentTitle("fullScreenNotificaion")
+                .setContentText("it's full screen Notification")
+                .setSmallIcon(R.drawable.ic_launcher_background)
+                .setPriority(NotificationCompat.PRIORITY_DEFAULT)
+                .setFullScreenIntent(pendingIntent,true);
+        Notification notification = notificationBuilder.build();
+        notificationManagerCompat = NotificationManagerCompat.from(this);
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            notificationManagerCompat.createNotificationChannel(new NotificationChannel(MY_CHANNEL_ID,"FULL_SCREEN",NotificationManagerCompat.IMPORTANCE_DEFAULT));
+        }
+        notificationManagerCompat.notify(1,notification);
+    }
+
+    private void showProgressNotification(){
+        notificationBuilder = new NotificationCompat.Builder(this,MY_CHANNEL_ID).setSmallIcon(R.drawable.ic_launcher_foreground)
+                 .setContentTitle("NotificationProgress")
+                .setContentText("Donwloading")
+                .setPriority(NotificationCompat.PRIORITY_DEFAULT)
+                .setProgress(100,0,false);
+        Notification notification  = notificationBuilder.build();
+         notificationManagerCompat = NotificationManagerCompat.from(this);
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            notificationManagerCompat.createNotificationChannel(new NotificationChannel(MY_CHANNEL_ID,"ProgressBar",NotificationManager.IMPORTANCE_DEFAULT));
+        }
+        notificationManagerCompat.notify(1,notification);
+    }
     private void showReplyNotification(){
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT_WATCH) {
             RemoteInput remoteInput =  new RemoteInput.Builder("remote_input_key").setLabel("Reply").build();
             Intent receiveReplyReceiverIntent = new Intent(this,MyBroadcastReceiver.class);
+            receiveReplyReceiverIntent.setAction("action.need.reply.msg");
             PendingIntent pendingIntent = PendingIntent.getBroadcast(this,1,receiveReplyReceiverIntent,0);
-            NotificationCompat.Action action = new NotificationCompat.Action.Builder(R.drawable.ic_launcher_foreground,"NotificationAction",pendingIntent).addRemoteInput(remoteInput).build();
+            NotificationCompat.Action action = new NotificationCompat.Action.Builder(R.drawable.ic_launcher_foreground,"ReplyMsg",pendingIntent).addRemoteInput(remoteInput).build();
             NotificationCompat.Builder builder = new NotificationCompat.Builder(this,MY_CHANNEL_ID).setContentTitle("testRemotInput")
                     .setContentText("this is content text")
                     .setSmallIcon(R.drawable.ic_launcher_foreground)
