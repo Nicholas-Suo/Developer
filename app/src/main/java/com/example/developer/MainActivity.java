@@ -5,6 +5,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.NotificationCompat;
 import androidx.core.app.NotificationManagerCompat;
 import androidx.core.app.RemoteInput;
+import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -17,6 +18,11 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.graphics.Bitmap;
+import android.graphics.Canvas;
+import android.graphics.drawable.AdaptiveIconDrawable;
+import android.graphics.drawable.BitmapDrawable;
+import android.graphics.drawable.Drawable;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
@@ -46,7 +52,10 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        showFullScreenNotification();
+        showMessageNotification();
+        //showBitTextNotification();
+      //  showBigPictureNotification();
+       // showFullScreenNotification();
         //showProgressNotification();
      //   showReplyNotification();
       //  notificationStartReceiver();
@@ -81,6 +90,76 @@ public class MainActivity extends AppCompatActivity {
         }
     };
 */
+    private Bitmap getBitMap(){
+
+      Drawable drawable =  ContextCompat.getDrawable(this,R.mipmap.ic_launcher);
+        Bitmap bitmap = null;
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            if(drawable instanceof AdaptiveIconDrawable){
+                bitmap = Bitmap.createBitmap(drawable.getIntrinsicWidth(),drawable.getIntrinsicHeight(),Bitmap.Config.ARGB_8888);
+                Canvas canvas = new Canvas(bitmap);
+                drawable.setBounds(0,0,drawable.getIntrinsicWidth(),drawable.getIntrinsicHeight());
+                drawable.draw(canvas);
+            }
+        }else{
+            bitmap = ((BitmapDrawable)drawable).getBitmap();
+        }
+        return  bitmap;
+    }
+
+    private void showMessageNotification(){
+        NotificationCompat.MessagingStyle.Message message1 =
+                new NotificationCompat.MessagingStyle.Message("abc",
+                        1230,
+                        "liusershu");
+        NotificationCompat.MessagingStyle.Message message2 =
+                new NotificationCompat.MessagingStyle.Message("cdef",
+                        1235,
+                        "Nicholas");
+        notificationBuilder = new NotificationCompat.Builder(this,MY_CHANNEL_ID).setContentTitle("BigText")
+                .setContentText("This is bigText")
+                .setSmallIcon(R.mipmap.ic_launcher)
+                .setStyle(new NotificationCompat.MessagingStyle("ReplyMSG").addMessage(message1).addMessage(message2));
+
+        Notification notification = notificationBuilder.build();
+        notificationManagerCompat = NotificationManagerCompat.from(this);
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            notificationManagerCompat.createNotificationChannel(new NotificationChannel(MY_CHANNEL_ID,"BITTEXT",NotificationManager.IMPORTANCE_DEFAULT));
+        }
+        notificationManagerCompat.notify(1,notification);
+    }
+
+    private void showBitTextNotification(){
+        notificationBuilder = new NotificationCompat.Builder(this,MY_CHANNEL_ID).setContentTitle("BigText")
+                .setContentText("This is bigText")
+                .setSmallIcon(R.mipmap.ic_launcher)
+                //.setStyle(new NotificationCompat.BigTextStyle().bigText("this is bigText context,this is bigText context,this is bigText context,this is bigText context,this is bigText context,this is bigText context,this is bigText context"));
+                .setStyle(new NotificationCompat.InboxStyle().addLine("abcdefg").addLine("higklmnopqhhh"));
+        Notification notification = notificationBuilder.build();
+        notificationManagerCompat = NotificationManagerCompat.from(this);
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            notificationManagerCompat.createNotificationChannel(new NotificationChannel(MY_CHANNEL_ID,"BITTEXT",NotificationManager.IMPORTANCE_DEFAULT));
+        }
+        notificationManagerCompat.notify(1,notification);
+    }
+    private void  showBigPictureNotification(){
+       // Drawable drawable = getResources().getDrawable(R.mipmap.ic_launcher);
+      //  BitmapDrawable bitmapDrawable = (BitmapDrawable)(getResources().getDrawable(R.mipmap.ic_launcher));
+        Bitmap bitmap = getBitMap();
+        notificationBuilder = new NotificationCompat.Builder(this,MY_CHANNEL_ID).setSmallIcon(R.drawable.ic_launcher_background)
+                .setContentTitle("BigPicture")
+                .setContentText("this big picture notification")
+                .setLargeIcon(bitmap)
+                .setStyle(new NotificationCompat.BigPictureStyle().bigPicture(bitmap).bigLargeIcon(null));
+
+        Notification notification = notificationBuilder.build();
+        notificationManagerCompat = NotificationManagerCompat.from(this);
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            notificationManagerCompat.createNotificationChannel(new NotificationChannel(MY_CHANNEL_ID,"BIG_PICTURE",NotificationManager.IMPORTANCE_DEFAULT));
+        }
+        notificationManagerCompat.notify(1,notification);
+    }
+
     private void showFullScreenNotification(){
         Intent intent = new Intent(this,FullScreenNotificationActivity.class);
         PendingIntent pendingIntent = PendingIntent.getActivity(this,1,intent,PendingIntent.FLAG_UPDATE_CURRENT);
@@ -92,7 +171,7 @@ public class MainActivity extends AppCompatActivity {
         Notification notification = notificationBuilder.build();
         notificationManagerCompat = NotificationManagerCompat.from(this);
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            notificationManagerCompat.createNotificationChannel(new NotificationChannel(MY_CHANNEL_ID,"FULL_SCREEN",NotificationManagerCompat.IMPORTANCE_DEFAULT));
+            notificationManagerCompat.createNotificationChannel(new NotificationChannel(MY_CHANNEL_ID,"FULL_SCREEN",NotificationManager.IMPORTANCE_DEFAULT));
         }
         notificationManagerCompat.notify(1,notification);
     }
