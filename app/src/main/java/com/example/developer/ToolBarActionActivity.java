@@ -12,6 +12,10 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.widget.SearchView;
 
+import com.example.developer.mode.FactoryMode.ConcreteFactory;
+import com.example.developer.mode.FactoryMode.Product;
+import com.example.developer.mode.FactoryMode.ProductA;
+import com.example.developer.mode.FactoryMode.ProductB;
 import com.example.developer.mode.OriginMode.Login;
 import com.example.developer.mode.OriginMode.LoginSession;
 import com.example.developer.mode.OriginMode.User;
@@ -27,8 +31,14 @@ public class ToolBarActionActivity extends AppCompatActivity {
         setSupportActionBar(toolbar);
         ActionBar actionBar = getSupportActionBar();
         actionBar.setDisplayHomeAsUpEnabled(true);
+
+        ConcreteFactory factory = new ConcreteFactory();
+        Product productA =  factory.createProduct(ProductA.class);
+        productA.method();
+        Product productB = factory.createProduct(ProductB.class);
+        productB.method();
         //test Login
-        Login login = new Login();
+/*        Login login = new Login();
         login.login();
         //test do not use origin mode
         LoginSession loginSession = LoginSession.getInstance();
@@ -38,7 +48,8 @@ public class ToolBarActionActivity extends AppCompatActivity {
         User.Address address = new User.Address("shanghai");
 
         User originUser = loginSession.getUser();
-        Log.d(TAG,"wangsm,the origin user infor:  " + originUser.toString());
+        Log.d(TAG,"wangsm,the origin user infor:  " + originUser.toString());*/
+        //test end origin mode
 
     }
 
