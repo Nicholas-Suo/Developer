@@ -34,6 +34,10 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
+import com.example.developer.mode.ResponsibilityMode.CeoLeader;
+import com.example.developer.mode.ResponsibilityMode.GroupLeader;
+import com.example.developer.mode.ResponsibilityMode.ManagerLeader;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -53,6 +57,11 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         showMessageNotification();
+        GroupLeader groupLeader = new GroupLeader();
+
+        ManagerLeader managerLeader = new ManagerLeader();
+        CeoLeader ceoLeader = new CeoLeader();
+
         //showBitTextNotification();
       //  showBigPictureNotification();
        // showFullScreenNotification();

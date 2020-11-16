@@ -19,6 +19,7 @@ import com.example.developer.mode.FactoryMode.ProductB;
 import com.example.developer.mode.OriginMode.Login;
 import com.example.developer.mode.OriginMode.LoginSession;
 import com.example.developer.mode.OriginMode.User;
+import com.example.developer.mode.ResponsibilityMode.RequestMoney;
 
 public class ToolBarActionActivity extends AppCompatActivity {
 
@@ -31,12 +32,17 @@ public class ToolBarActionActivity extends AppCompatActivity {
         setSupportActionBar(toolbar);
         ActionBar actionBar = getSupportActionBar();
         actionBar.setDisplayHomeAsUpEnabled(true);
+        RequestMoney requestMoney = new RequestMoney();
+        requestMoney.requestMoney(2000);
 
-        ConcreteFactory factory = new ConcreteFactory();
+
+        //factory mode begin
+/*        ConcreteFactory factory = new ConcreteFactory();
         Product productA =  factory.createProduct(ProductA.class);
         productA.method();
         Product productB = factory.createProduct(ProductB.class);
-        productB.method();
+        productB.method();*/
+        //factory mode end
         //test Login
 /*        Login login = new Login();
         login.login();
