@@ -12,8 +12,8 @@ public class ConcreteAggregate<T> implements Aggregate<T>{
     }
 
     @Override
-    public void remove(int index) {
-        dataList.remove(index);
+    public void remove(T obj) {
+        dataList.remove(obj);
     }
 
     @Override
