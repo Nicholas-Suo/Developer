@@ -16,9 +16,11 @@ public class ConcreteIterator<T> implements Iterator<T>{
 
     @Override
     public T next() {
-        if(dataList == null){
-            return  null;
+        T obj = null;
+        if(hasNext()){
+            obj = this.dataList.get(cursor++);
         }
-        return dataList.get(cursor++);
+
+        return obj;
     }
 }
